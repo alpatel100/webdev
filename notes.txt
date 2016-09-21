@@ -1,14 +1,29 @@
 //############ # Node - Express
 
-var express = require("express");
-var app = express();
-var bodyParser = require("body-parser");  // to parse the incoming form data from body to object
-app.use(bodyParser.urlencoded({extended:true}));
+var bodyParser = require("body-parser"),  // to parse the incoming form data from body to object
+    express = require("express"),
+    mongoose = require("mongoose"),
+    app = express();
+
+mongoose.connect("mongodb://localhost:/blog_app");
+
+app.use(bodyParser.urlencoded({extended:true}));   // to parse the incoming form data from body to object
 app.set("view engine", "ejs");  // use ejs extention for all embedded js file in /views directory
+app.use(express.static("public"));
+
 
 // root route
 app.get("/", function(req,res) {
   res.render("home");
+});
+
+// GET Single user
+app.get("/campgrounds/:id", function(req, res) {
+    var id = req.params.id;
+    Campground.findById(id,function(err, campground){
+      if (err) return console.error(err);
+      res.render("show", {campground: campground});
+  });
 });
 
 // Port
@@ -22,6 +37,22 @@ app.listen(process.env.PORT, process.env.IP, function() {
 
 // request
 var request = require('request'); // to request HTTP web page request
+
+
+//#############  RESTful EXPRESS ROUTES #############
+Name    Route	            HTTP        Verb	Description
+---------------------------------------------------------
+INDEX   /bears	          GET	        Get all the bears.
+
+NEW     /bears/new	      GET	        Display form to Create a bear.
+CREATE  /bears	          POST	      Create a bear and save to database.
+
+SHOW    /bears/:id    	  GET	        Get a single bear.
+
+EDIT    /bears/:id/edit	  GET	        Disaply a form to EDIT a bear with new info.
+UPDATE  /bears/:id    	  PUT	        Update a bear with new info.
+
+DELETE  /bears/:id    	  DELETE	    Delete a bear.
 
 
 //############# Mongo DB ####
@@ -44,6 +75,7 @@ on command line:
 2. use <database>
 3. show collections
 4. db.<collection>.find()
+5. db.collection.drop() // clean out the database
 
 //############# Mongoose #### ODM - Object Data Mapper
 First be sure you have MongoDB and Node.js installed.
@@ -96,8 +128,27 @@ Kitten.find(function (err, kittens) {
 
 ->
 Kitten.find({ name: /^fluff/ }, callback);
+Kitten.findById(id, callback);
 
 //############# GIT HUB ####
 --> git remote add origin https://github.com/alpatel100/webdev.git
 
+- git config --global user.email alpatel100@gmail.com
+- git config --global user.name "Alpesh"
+- git init
+- git remote add origin https://github.com/alpatel100/webdev.git
+- git clone git@https://github.com/alpatel100/webdev.git
+- git add
+- git rm
+- git commit -m "Comment"
+- git status
+- git push -u origin master
+- 
 
+########## CLASS workspace  #############
+https://ide.c9.io/learnwithcolt/webdevbootcamp
+
+
+######## RESOURCES::
+For Images: https://source.unsplash.com
+For random text: http://baconipsum.com/
